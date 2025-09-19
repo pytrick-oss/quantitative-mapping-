@@ -1,1 +1,12 @@
 target/
+# Local data files (ignored except README/sample)
+data/*
+!data/README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Rust / tooling extras (if appear)
+*.log
+**/*.rs.bk
