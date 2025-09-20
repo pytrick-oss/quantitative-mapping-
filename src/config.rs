@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use clap::{ArgAction, Parser};
 
 /// Command-line configuration for the quantitative mapping tool.
@@ -15,12 +13,44 @@ pub struct AppConfig {
     pub atr_period: usize,
 
     /// ATR multiplier controlling swing detection sensitivity.
-    #[arg(long, default_value_t = 1.5)]
+    #[arg(long, default_value_t = 0.3)]
     pub atr_multiplier: f64,
 
     /// Minimum absolute swing distance to register a new swing (price units).
-    #[arg(long, default_value_t = 0.0)]
+    #[arg(long, default_value_t = 25.0)]
     pub min_swing_distance: f64,
+
+    /// Number of days of data to analyse. Set to 0 to use all available history.
+    #[arg(long, default_value_t = 90)]
+    pub lookback_days: usize,
+
+    /// Use a multi-window, regime-aware level aggregation.
+    #[arg(long, action = ArgAction::SetTrue)]
+    pub regime_aware: bool,
+
+    /// Apply a stronger recency weighting when estimating densities.
+    #[arg(long, action = ArgAction::SetTrue)]
+    pub strong_recency: bool,
+
+    /// Enable EVT-based resistance projection.
+    #[arg(long, action = ArgAction::SetTrue)]
+    pub evt_resistance: bool,
+
+    /// EVT lookback window (days) used to fit the tail distribution.
+    #[arg(long, default_value_t = 30)]
+    pub ev_lookback_days: usize,
+
+    /// Upper-tail probability (overall) used for the first EVT projection.
+    #[arg(long, default_value_t = 0.99)]
+    pub ev_tail_probability: f64,
+
+    /// Quantile (0-1) defining the exceedance threshold for EVT.
+    #[arg(long, default_value_t = 0.9)]
+    pub ev_threshold_quantile: f64,
+
+    /// Maximum number of EVT resistance levels to generate.
+    #[arg(long, default_value_t = 2)]
+    pub ev_max_levels: usize,
 
     /// KDE grid points for price density estimation.
     #[arg(long, default_value_t = 400)]

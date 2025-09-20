@@ -145,7 +145,20 @@ fn parse_datetime_string(value: &str) -> Result<Option<NaiveDateTime>> {
 }
 
 fn parse_date(value: &str) -> Result<NaiveDate> {
-    let patterns = ["%Y/%m/%d", "%Y-%m-%d", "%m/%d/%Y"];
+    let patterns = [
+        "%Y-%m-%d",
+        "%Y-%-m-%-d",
+        "%Y-%-m-%d",
+        "%Y-%m-%-d",
+        "%Y/%m/%d",
+        "%Y/%-m/%-d",
+        "%Y/%-m/%d",
+        "%Y/%m/%-d",
+        "%m/%d/%Y",
+        "%m/%-d/%Y",
+        "%-m/%d/%Y",
+        "%-m/%-d/%Y",
+    ];
     for pattern in &patterns {
         if let Ok(date) = NaiveDate::parse_from_str(value, pattern) {
             return Ok(date);
@@ -155,7 +168,7 @@ fn parse_date(value: &str) -> Result<NaiveDate> {
 }
 
 fn parse_time(value: &str) -> Result<NaiveTime> {
-    let patterns = ["%H:%M:%S", "%H:%M"];
+    let patterns = ["%H:%M:%S%.f", "%H:%M:%S", "%H:%M"];
     for pattern in &patterns {
         if let Ok(time) = NaiveTime::parse_from_str(value, pattern) {
             return Ok(time);

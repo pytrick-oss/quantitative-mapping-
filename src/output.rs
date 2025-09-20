@@ -66,7 +66,7 @@ pub fn print_report(
                     .join(", ")
             };
             println!("Bandwidths: {bandwidth_info}");
-            println!("Price Range: {:.2} – {:.2}", first.price, last.price);
+            println!("Price Range: {:.2} to {:.2}", first.price, last.price);
         }
     }
 
@@ -77,23 +77,47 @@ pub fn print_report(
 
     let rows: Vec<LevelRow> = levels
         .iter()
-        .map(|level| LevelRow {
-            kind: match level.level_type {
-                LevelType::Support => "Support",
-                LevelType::Resistance => "Resistance",
-            },
-            price: format!("{:.2}", level.price),
-            confidence: format!("{:.2}", level.confidence * 100.0),
-            band: format!("±{:.2}", level.confidence_band),
-            hit_rate: format!("{:.1}%", level.performance.hit_rate * 100.0),
-            touches: format!("{}", level.performance.tests),
-            avg_reaction: format!("{:.2}", level.performance.avg_reaction),
-            max_move: format!("{:.2}", level.performance.max_favorable_excursion),
-            bars: if level.performance.avg_reaction_bars > 0.0 {
+        .map(|level| {
+            let tests = level.performance.tests;
+            let hit_rate = if tests > 0 {
+                format!("{:.1}%", level.performance.hit_rate * 100.0)
+            } else {
+                "-".to_string()
+            };
+            let touches = if tests > 0 {
+                format!("{}", tests)
+            } else {
+                "-".to_string()
+            };
+            let avg_reaction = if tests > 0 {
+                format!("{:.2}", level.performance.avg_reaction)
+            } else {
+                "-".to_string()
+            };
+            let max_move = if tests > 0 {
+                format!("{:.2}", level.performance.max_favorable_excursion)
+            } else {
+                "-".to_string()
+            };
+            let bars = if tests > 0 && level.performance.avg_reaction_bars > 0.0 {
                 format!("{:.1}", level.performance.avg_reaction_bars)
             } else {
-                String::from("–")
-            },
+                "-".to_string()
+            };
+            LevelRow {
+                kind: match level.level_type {
+                    LevelType::Support => "Support",
+                    LevelType::Resistance => "Resistance",
+                },
+                price: format!("{:.2}", level.price),
+                confidence: format!("{:.2}", level.confidence * 100.0),
+                band: format!("+/-{:.2}", level.confidence_band),
+                hit_rate,
+                touches,
+                avg_reaction,
+                max_move,
+                bars,
+            }
         })
         .collect();
 
